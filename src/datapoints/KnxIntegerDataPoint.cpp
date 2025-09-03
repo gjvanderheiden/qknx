@@ -1,33 +1,35 @@
+#include <cstdint>
 #include <knx/datapointtypes/DataPointType.h>
-#include <KnxBooleanDataPoint.h>
+#include "datapoints/KnxIntegerDataPoint.h"
 
-KnxBooleanDataPoint::KnxBooleanDataPoint(
+KnxIntegerDataPoint::KnxIntegerDataPoint(
     KnxClientConnection &knxClientConnection, GroupAddress gaRead,
     GroupAddress gaWrite)
     : knxClientConnection{knxClientConnection}, gaRead{gaRead},
       gaWrite{gaWrite} {}
 
-void KnxBooleanDataPoint::addUpdateListener(UpdateCB &&updateCB) {
+void KnxIntegerDataPoint::addUpdateListener(UpdateCB &&updateCB) {
   listeners.emplace_back(std::move(updateCB));
 }
 
-bool KnxBooleanDataPoint::getValue() { return this->value; }
+std::uint8_t KnxIntegerDataPoint::getValue() { return this->value; }
 
-awaitable<void> KnxBooleanDataPoint::requestUpdate() {
+awaitable<void> KnxIntegerDataPoint::requestUpdate() {
   co_await knxClientConnection.readGroup(gaRead);
 }
 
-asio::awaitable<void> KnxBooleanDataPoint::setValue(bool value) {
+asio::awaitable<void> KnxIntegerDataPoint::setValue(std::uint8_t value) {
+  std::cout << "KnxIntegerDataPoint::setValue(" << (int)value << " : std::uint8_t)\n";
   co_await knxClientConnection.writeToGroup(
-      gaWrite, value, true);
+      gaWrite, value, false);
 }
 
-void KnxBooleanDataPoint::onGroupReadResponse(
+void KnxIntegerDataPoint::onGroupReadResponse(
     const IndividualAddress &source, const GroupAddress &ga,
     std::span<const std::uint8_t> data) {
   if (ga == gaRead) {
     std::cout << "Got new value via Group Read Response" << std::endl;
-    bool newValue = knx::datapoint::BooleanDataPointType::toValue(data);
+    auto newValue = knx::datapoint::UInt8DataPointType::toValue(data);
     if (newValue != value) {
       value = newValue;
       for(auto& updateCB : listeners) {
@@ -37,12 +39,12 @@ void KnxBooleanDataPoint::onGroupReadResponse(
   }
 }
 
-void KnxBooleanDataPoint::onGroupWrite(const IndividualAddress &source,
+void KnxIntegerDataPoint::onGroupWrite(const IndividualAddress &source,
                                        const GroupAddress &ga,
                                        std::span<const std::uint8_t> data) {
-  if (ga == gaRead) {
+  if (ga == gaWrite) {
     std::cout << "Got new value via Group Write Response\n";
-    bool newValue = knx::datapoint::BooleanDataPointType::toValue(data);
+    auto newValue = knx::datapoint::UInt8DataPointType::toValue(data);
     if (newValue != value) {
       value = newValue;
       for(auto& updateCB : listeners) {

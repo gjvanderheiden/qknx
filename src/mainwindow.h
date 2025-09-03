@@ -1,8 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "KnxBooleanDataPoint.h"
-#include "KnxIntegerDataPoint.h"
+#include "datapoints/KnxBooleanDataPoint.h"
+#include "datapoints/KnxIntegerDataPoint.h"
 #include <QMainWindow>
 #include <QObject>
 #include <QWidget>

@@ -15,9 +15,9 @@ pkg_check_modules(ASIO REQUIRED asio)
 
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON) 
-file(GLOB_RECURSE header_files *.h*)
-#file(GLOB_RECURSE CPP_SOURCE_FILES *.cpp)
-set(CPP_SOURCE_FILES main.cpp mainwindow.cpp KnxBooleanDataPoint.cpp KnxIntegerDataPoint.cpp)
+file(GLOB_RECURSE header_files src/*.h src/*/*.h)
+file(GLOB_RECURSE CPP_SOURCE_FILES src/*.cpp src/**/*.cpp )
+#set(CPP_SOURCE_FILES main.cpp mainwindow.cpp KnxBooleanDataPoint.cpp KnxIntegerDataPoint.cpp)
 
 qt_wrap_ui( UI_FILES mainwindow.ui )
 
@@ -27,7 +27,7 @@ target_sources(${PROJECT_NAME}
    PUBLIC
      FILE_SET headers
      TYPE HEADERS
-     BASE_DIRS .
+     BASE_DIRS src
      FILES ${header_files}
    PRIVATE
      ${CPP_SOURCE_FILES} ${UI_FILES} )
