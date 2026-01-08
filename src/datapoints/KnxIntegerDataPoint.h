@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <hap/coroutines/Coroutines.h>
 #include <knx/connection/KnxClientConnection.h>
-#include <knx/datapointtypes/DataPointType.h>
+#include <knx/datapointtypes/Format.h>
 #include <knx/headers/KnxAddress.h>
 #include <memory>
 

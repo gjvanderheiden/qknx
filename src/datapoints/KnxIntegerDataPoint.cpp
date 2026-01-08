@@ -1,5 +1,5 @@
 #include <cstdint>
-#include <knx/datapointtypes/DataPointType.h>
+#include <knx/datapointtypes/Format.h>
 #include "datapoints/KnxIntegerDataPoint.h"
 
 KnxIntegerDataPoint::KnxIntegerDataPoint(
@@ -15,7 +15,7 @@ void KnxIntegerDataPoint::addUpdateListener(UpdateCB &&updateCB) {
 std::uint8_t KnxIntegerDataPoint::getValue() { return this->value; }
 
 awaitable<void> KnxIntegerDataPoint::requestUpdate() {
-  co_await knxClientConnection.readGroup(gaRead);
+  co_await knxClientConnection.sendReadGroup(gaRead);
 }
 
 asio::awaitable<void> KnxIntegerDataPoint::setValue(std::uint8_t value) {
@@ -29,7 +29,7 @@ void KnxIntegerDataPoint::onGroupReadResponse(
     std::span<const std::uint8_t> data) {
   if (ga == gaRead) {
     std::cout << "Got new value via Group Read Response" << std::endl;
-    auto newValue = knx::datapoint::UInt8DataPointType::toValue(data);
+    auto newValue = knx::datapoint::UInt8Format::toValue(data);
     if (newValue != value) {
       value = newValue;
       for(auto& updateCB : listeners) {
@@ -44,7 +44,7 @@ void KnxIntegerDataPoint::onGroupWrite(const IndividualAddress &source,
                                        std::span<const std::uint8_t> data) {
   if (ga == gaWrite) {
     std::cout << "Got new value via Group Write Response\n";
-    auto newValue = knx::datapoint::UInt8DataPointType::toValue(data);
+    auto newValue = knx::datapoint::UInt8Format::toValue(data);
     if (newValue != value) {
       value = newValue;
       for(auto& updateCB : listeners) {

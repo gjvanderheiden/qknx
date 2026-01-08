@@ -1,4 +1,4 @@
-#include <knx/datapointtypes/DataPointType.h>
+#include <knx/datapointtypes/Format.h>
 #include <datapoints/KnxBooleanDataPoint.h>
 
 KnxBooleanDataPoint::KnxBooleanDataPoint(
@@ -14,7 +14,7 @@ void KnxBooleanDataPoint::addUpdateListener(UpdateCB &&updateCB) {
 bool KnxBooleanDataPoint::getValue() { return this->value; }
 
 awaitable<void> KnxBooleanDataPoint::requestUpdate() {
-  co_await knxClientConnection.readGroup(gaRead);
+  co_await knxClientConnection.sendReadGroup(gaRead);
 }
 
 asio::awaitable<void> KnxBooleanDataPoint::setValue(bool value) {
@@ -27,7 +27,7 @@ void KnxBooleanDataPoint::onGroupReadResponse(
     std::span<const std::uint8_t> data) {
   if (ga == gaRead) {
     std::cout << "Got new value via Group Read Response" << std::endl;
-    bool newValue = knx::datapoint::BooleanDataPointType::toValue(data);
+    bool newValue = knx::datapoint::BooleanFormat::toValue(data);
     if (newValue != value) {
       value = newValue;
       for(auto& updateCB : listeners) {
@@ -42,7 +42,7 @@ void KnxBooleanDataPoint::onGroupWrite(const IndividualAddress &source,
                                        std::span<const std::uint8_t> data) {
   if (ga == gaRead) {
     std::cout << "Got new value via Group Write Response\n";
-    bool newValue = knx::datapoint::BooleanDataPointType::toValue(data);
+    bool newValue = knx::datapoint::BooleanFormat::toValue(data);
     if (newValue != value) {
       value = newValue;
       for(auto& updateCB : listeners) {
