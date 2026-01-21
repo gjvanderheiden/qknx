@@ -13,7 +13,7 @@ void KnxBooleanDataPoint::addUpdateListener(UpdateCB &&updateCB) {
 
 bool KnxBooleanDataPoint::getValue() { return this->value; }
 
-awaitable<void> KnxBooleanDataPoint::requestUpdate() {
+asio::awaitable<void> KnxBooleanDataPoint::requestUpdate() {
   co_await knxClientConnection.sendReadGroup(gaRead);
 }
 

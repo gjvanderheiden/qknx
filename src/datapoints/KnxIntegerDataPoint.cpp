@@ -14,7 +14,7 @@ void KnxIntegerDataPoint::addUpdateListener(UpdateCB &&updateCB) {
 
 std::uint8_t KnxIntegerDataPoint::getValue() { return this->value; }
 
-awaitable<void> KnxIntegerDataPoint::requestUpdate() {
+asio::awaitable<void> KnxIntegerDataPoint::requestUpdate() {
   co_await knxClientConnection.sendReadGroup(gaRead);
 }
 

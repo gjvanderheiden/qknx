@@ -14,7 +14,7 @@ void KnxFloatDataPoint::addUpdateListener(UpdateCB &&updateCB) {
 
 double KnxFloatDataPoint::getValue() { return this->value; }
 
-awaitable<void> KnxFloatDataPoint::requestUpdate() {
+asio::awaitable<void> KnxFloatDataPoint::requestUpdate() {
   co_await knxClientConnection.sendReadGroup(gaRead);
 }
 

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include <hap/coroutines/Coroutines.h>
 #include <knx/connection/KnxClientConnection.h>
 #include <knx/datapointtypes/Format.h>
 #include <knx/headers/KnxAddress.h>
@@ -18,8 +17,8 @@ public:
                       GroupAddress gaRead, GroupAddress gaWrite);
 
   double getValue();
-  awaitable<void> setValue(double value);
-  awaitable<void> requestUpdate();
+  asio::awaitable<void> setValue(double value);
+  asio::awaitable<void> requestUpdate();
 
   void addUpdateListener(UpdateCB&& updateCB);
 
